@@ -21,11 +21,11 @@ type lancamentoDomainService struct {
 	repository output.LancamentoPort
 }
 
-func (ud *lancamentoDomainService) CreateLancamentoServices(lancamentoDomain domain.LancamentoDomain) (*domain.LancamentoDomain, *rest_errors.RestErr) {
+func (ls *lancamentoDomainService) Save(lancamentoDomain domain.LancamentoDomain) (*domain.LancamentoDomain, *rest_errors.RestErr) {
 
 	logger.Info("Init createLancamento model.", zap.String("journey", "createLancamento"))
 
-	lancamentoDomainRepository, err := ud.repository.CreateLancamento(lancamentoDomain)
+	lancamentoDomainRepository, err := ls.repository.Save(lancamentoDomain)
 	if err != nil {
 		logger.Error("Error trying to call repository",
 			err,
@@ -40,10 +40,10 @@ func (ud *lancamentoDomainService) CreateLancamentoServices(lancamentoDomain dom
 	return lancamentoDomainRepository, nil
 }
 
-func (ud *lancamentoDomainService) FindByIdLancamentoServices(id uint64) (lancamento *domain.LancamentoDomain, err *rest_errors.RestErr) {
+func (ls *lancamentoDomainService) FindById(id uint64) (lancamento *domain.LancamentoDomain, err *rest_errors.RestErr) {
 	logger.Info("Init findUserByID services.",
 		zap.String("journey", "findUserById"))
 
-	lancamento, err = ud.repository.FindLancamentoByID(id)
+	lancamento, err = ls.repository.FindById(id)
 	return
 }

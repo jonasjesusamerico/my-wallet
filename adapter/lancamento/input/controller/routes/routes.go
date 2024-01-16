@@ -9,6 +9,6 @@ import (
 func InitRoutesLancamento(r *gin.RouterGroup, lancamentoController controller.LancamentoControllerInterface) {
 	lancamentoGroup := r.Group("/lancamentos")
 
-	lancamentoGroup.POST("/", lancamentoController.CreateLancamento)
-	lancamentoGroup.GET("/:id", lancamentoController.FindLancamentoByID)
+	lancamentoGroup.POST("/", lancamentoController.Save)
+	lancamentoGroup.GET("/:id", lancamentoController.FindById)
 }

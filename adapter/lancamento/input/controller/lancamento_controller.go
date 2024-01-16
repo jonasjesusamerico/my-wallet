@@ -7,6 +7,7 @@ import (
 	"my-wallet/application/domain"
 	"my-wallet/application/port/lancamento/input"
 	logger "my-wallet/configuration"
+	"my-wallet/configuration/rest_errors"
 	"my-wallet/configuration/validation"
 	"net/http"
 	"strconv"
@@ -16,8 +17,8 @@ import (
 )
 
 type LancamentoControllerInterface interface {
-	CreateLancamento(c *gin.Context)
-	FindLancamentoByID(c *gin.Context)
+	Save(c *gin.Context)
+	FindById(c *gin.Context)
 }
 
 type lancamentoControllerInterface struct {
@@ -30,7 +31,7 @@ func NewLancamentoControllerInterface(service input.LancamentoDomainService) Lan
 	}
 }
 
-func (uc *lancamentoControllerInterface) CreateLancamento(c *gin.Context) {
+func (lc *lancamentoControllerInterface) Save(c *gin.Context) {
 	logger.Info("Init CreateLancamento controller",
 		zap.String("journey", "createLancamento"),
 	)
@@ -54,7 +55,7 @@ func (uc *lancamentoControllerInterface) CreateLancamento(c *gin.Context) {
 		Situacao:       lancamentoRequest.Situacao,
 	}
 
-	domainResult, err := uc.service.CreateLancamentoServices(lancamentoDomain)
+	domainResult, err := lc.service.Save(lancamentoDomain)
 	if err != nil {
 		logger.Error(
 			"Error trying to call CreateLancamento service",
@@ -74,7 +75,7 @@ func (uc *lancamentoControllerInterface) CreateLancamento(c *gin.Context) {
 	))
 }
 
-func (lc *lancamentoControllerInterface) FindLancamentoByID(c *gin.Context) {
+func (lc *lancamentoControllerInterface) FindById(c *gin.Context) {
 	logger.Info("Init findLancamentoByID controller",
 		zap.String("journey", "findLancamentoByID"),
 	)
@@ -84,18 +85,19 @@ func (lc *lancamentoControllerInterface) FindLancamentoByID(c *gin.Context) {
 		logger.Error(
 			"Error when trying to parse lancamentoId for uint", err,
 			zap.String("journey", "createLancamento"))
-		c.JSON(http.StatusBadRequest, err)
+
+		c.JSON(http.StatusBadRequest, rest_errors.NewBadRequestError(err.Error()))
 		return
 	}
 	fmt.Println(lancamentoId)
 
-	LancamentoDomain, errr := lc.service.FindByIdLancamentoServices(lancamentoId)
-	if errr != nil {
+	LancamentoDomain, errRest := lc.service.FindById(lancamentoId)
+	if errRest != nil {
 		logger.Error("Error trying to call findLancamentoByID services",
 			err,
 			zap.String("journey", "findLancamentoByID"),
 		)
-		c.JSON(errr.Code, errr)
+		c.JSON(errRest.Code, errRest)
 		return
 	}
 

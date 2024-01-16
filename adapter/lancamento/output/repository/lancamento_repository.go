@@ -23,22 +23,22 @@ type lancamentoRepository struct {
 }
 
 // FindLancamentoByID implements output.LancamentoPort.
-func (lc *lancamentoRepository) FindLancamentoByID(id uint64) (*domain.LancamentoDomain, *rest_errors.RestErr) {
+func (lr *lancamentoRepository) FindById(id uint64) (*domain.LancamentoDomain, *rest_errors.RestErr) {
 	logger.Info("Init createLancamento repository", zap.String("journey", "findLancamentoById"))
 	lancamentoEntity := &entity.LancamentoEntity{}
-	if err := lc.db.First(&lancamentoEntity, id).Error; err != nil {
+	if err := lr.db.First(&lancamentoEntity, id).Error; err != nil {
 		return nil, rest_errors.NewNotFoundError(err.Error())
 	}
 
 	return converter.ConvertEntityToDomain(*lancamentoEntity), nil
 }
 
-func (ur *lancamentoRepository) CreateLancamento(lancamentoDomain domain.LancamentoDomain) (*domain.LancamentoDomain, *rest_errors.RestErr) {
+func (lr *lancamentoRepository) Save(lancamentoDomain domain.LancamentoDomain) (*domain.LancamentoDomain, *rest_errors.RestErr) {
 	logger.Info("Init createLancamento repository", zap.String("journey", "createLancamento"))
 
 	value := converter.ConvertDomainToEntity(lancamentoDomain)
 
-	ur.db.Create(value)
+	lr.db.Create(value)
 
 	logger.Info(
 		"CreateLancamento repository executed successfully",
