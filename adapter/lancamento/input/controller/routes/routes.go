@@ -10,5 +10,6 @@ func InitRoutesLancamento(r *gin.RouterGroup, lancamentoController controller.La
 	lancamentoGroup := r.Group("/lancamentos")
 
 	lancamentoGroup.POST("/", lancamentoController.Save)
+	lancamentoGroup.PUT("/:id", lancamentoController.Update)
 	lancamentoGroup.GET("/:id", lancamentoController.FindById)
 }

@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"my-wallet/adapter/lancamento/output/converter"
 	"my-wallet/adapter/lancamento/output/entity"
 	"my-wallet/application/domain"
@@ -46,4 +47,40 @@ func (lr *lancamentoRepository) Save(lancamentoDomain domain.LancamentoDomain) (
 		zap.String("journey", "createLancamento"))
 
 	return converter.ConvertEntityToDomain(*value), nil
+}
+
+func (lr *lancamentoRepository) Update(lancamentoDomain domain.LancamentoDomain) (*domain.LancamentoDomain, *rest_errors.RestErr) {
+	logger.Info("Init createLancamento repository", zap.String("journey", "createLancamento"))
+
+	value := converter.ConvertDomainToEntity(lancamentoDomain)
+
+	exists := lr.Exists(value.ID)
+
+	if !exists {
+		return nil, rest_errors.NewNotFoundError("Not found")
+	}
+
+	lr.db.Create(value)
+
+	logger.Info(
+		"CreateLancamento repository executed successfully",
+		zap.String("lancamentoId", string(rune(value.ID))),
+		zap.String("journey", "createLancamento"))
+
+	return converter.ConvertEntityToDomain(*value), nil
+}
+
+func (lr *lancamentoRepository) Exists(id uint64) bool {
+	logger.Info("Init existsLancamento repository", zap.String("journey", "existsLancamento"))
+	lancamentoEntity := &entity.LancamentoEntity{}
+
+	if err := lr.db.First(&lancamentoEntity, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false
+		} else {
+			return false
+		}
+	}
+
+	return true
 }

@@ -7,5 +7,6 @@ import (
 
 type LancamentoDomainService interface {
 	Save(domain.LancamentoDomain) (*domain.LancamentoDomain, *rest_errors.RestErr)
+	Update(domain.LancamentoDomain) (*domain.LancamentoDomain, *rest_errors.RestErr)
 	FindById(uint64) (*domain.LancamentoDomain, *rest_errors.RestErr)
 }

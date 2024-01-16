@@ -40,6 +40,25 @@ func (ls *lancamentoDomainService) Save(lancamentoDomain domain.LancamentoDomain
 	return lancamentoDomainRepository, nil
 }
 
+func (ls *lancamentoDomainService) Update(lancamentoDomain domain.LancamentoDomain) (*domain.LancamentoDomain, *rest_errors.RestErr) {
+
+	logger.Info("Init updateLancamento model.", zap.String("journey", "updateLancamento"))
+
+	lancamentoDomainRepository, err := ls.repository.Update(lancamentoDomain)
+	if err != nil {
+		logger.Error("Error trying to call repository",
+			err,
+			zap.String("journey", "updateLancamento"))
+		return nil, err
+	}
+
+	logger.Info(
+		"UpdateLancamento service executed successfully",
+		zap.Uint64("lancamentoId", lancamentoDomainRepository.ID),
+		zap.String("journey", "updateLancamento"))
+	return lancamentoDomainRepository, nil
+}
+
 func (ls *lancamentoDomainService) FindById(id uint64) (lancamento *domain.LancamentoDomain, err *rest_errors.RestErr) {
 	logger.Info("Init findUserByID services.",
 		zap.String("journey", "findUserById"))

@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"my-wallet/adapter/lancamento/input/converter"
 	"my-wallet/adapter/lancamento/input/model/request"
 	"my-wallet/application/domain"
@@ -18,6 +17,7 @@ import (
 
 type LancamentoControllerInterface interface {
 	Save(c *gin.Context)
+	Update(c *gin.Context)
 	FindById(c *gin.Context)
 }
 
@@ -75,6 +75,54 @@ func (lc *lancamentoControllerInterface) Save(c *gin.Context) {
 	))
 }
 
+// Update implements LancamentoControllerInterface.
+func (lc *lancamentoControllerInterface) Update(c *gin.Context) {
+	logger.Info("Init UpdateLancamento controller",
+		zap.String("journey", "updateLancamento"),
+	)
+	lancamentoRequest := request.LancamentoRequest{}
+
+	if err := c.ShouldBindJSON(&lancamentoRequest); err != nil {
+		logger.Error("Error trying to validate lancamento info", err,
+			zap.String("journey", "createLancamento"))
+		errRest := validation.ValidateError(err)
+
+		c.JSON(errRest.Code, errRest)
+		return
+	}
+
+	lancamentoDomain := domain.LancamentoDomain{
+		ID:             lancamentoRequest.ID,
+		DataCompra:     lancamentoRequest.DataCompra,
+		Descricao:      lancamentoRequest.Descricao,
+		Setor:          lancamentoRequest.Setor,
+		FormaPagamento: lancamentoRequest.FormaPagamento,
+		Valor:          lancamentoRequest.Valor,
+		Situacao:       lancamentoRequest.Situacao,
+	}
+
+	domainResult, restError := lc.service.Update(lancamentoDomain)
+
+	if restError != nil {
+		logger.Error(
+			"Error trying to call UpdateLancamento service",
+			restError,
+			zap.String("journey", "createLancamento"))
+		c.JSON(restError.Code, restError)
+		return
+	}
+
+	logger.Info(
+		"UpdateLancamento controller executed successfully",
+		zap.String("lancamentoId", string(rune(domainResult.ID))),
+		zap.String("journey", "createLancamento"))
+
+	c.JSON(http.StatusOK, converter.ConvertDomainToResponse(
+		domainResult,
+	))
+
+}
+
 func (lc *lancamentoControllerInterface) FindById(c *gin.Context) {
 	logger.Info("Init findLancamentoByID controller",
 		zap.String("journey", "findLancamentoByID"),
@@ -89,7 +137,6 @@ func (lc *lancamentoControllerInterface) FindById(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, rest_errors.NewBadRequestError(err.Error()))
 		return
 	}
-	fmt.Println(lancamentoId)
 
 	LancamentoDomain, errRest := lc.service.FindById(lancamentoId)
 	if errRest != nil {
