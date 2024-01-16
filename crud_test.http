@@ -1,3 +1,21 @@
 // Testando primeira request
 GET http://localhost:8080/ping
 ###
+
+// Test requisição get em Lancamento
+GET http://localhost:8080/api/v1/lancamentos/1
+###
+
+// Test requisição get em Lancamento
+POST http://localhost:8080/api/v1/lancamentos HTTP/1.1
+content-type: application/json
+
+{
+    "dataCompra" : "2022-1-1",
+    "descricao" : "teste",
+    "setor" : "teste",
+    "formaPagamento" : "teste",
+    "valor" : 10.00,
+    "situacao" : "teste"
+}
+###
