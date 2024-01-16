@@ -5,6 +5,7 @@ import (
 )
 
 type LancamentoRequest struct {
+	ID             uint64          `json:"id"`
 	DataCompra     date.CustomTime `json:"dataCompra"`
 	Descricao      string          `json:"descricao"`
 	Setor          string          `json:"setor"`

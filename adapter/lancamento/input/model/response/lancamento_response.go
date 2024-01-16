@@ -5,7 +5,7 @@ import (
 )
 
 type LancamentoResponse struct {
-	ID             uint            `json:"id"`
+	ID             uint64          `json:"id"`
 	DataCompra     date.CustomTime `json:"dataCompra"`
 	Descricao      string          `json:"descricao"`
 	Setor          string          `json:"setor"`

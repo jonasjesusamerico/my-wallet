@@ -35,7 +35,7 @@ func (ls *lancamentoDomainService) Save(lancamentoDomain domain.LancamentoDomain
 
 	logger.Info(
 		"CreateLancamento service executed successfully",
-		zap.Uint("lancamentoId", lancamentoDomainRepository.ID),
+		zap.Uint64("lancamentoId", lancamentoDomainRepository.ID),
 		zap.String("journey", "createLancamento"))
 	return lancamentoDomainRepository, nil
 }

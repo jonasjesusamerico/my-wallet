@@ -7,7 +7,7 @@ import (
 )
 
 type LancamentoEntity struct {
-	ID             uint      `gorm:"primaryKey"`
+	ID             uint64    `gorm:"primaryKey"`
 	DataCompra     time.Time `gorm:"type:date"`
 	Descricao      string
 	Setor          string
